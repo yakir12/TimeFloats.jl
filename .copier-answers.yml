@@ -1,0 +1,12 @@
+# Changes here will be overwritten by Copier
+Authors: Yakir Gagnon <12.yakir@gmail.com>
+JuliaMinVersion: '1.10'
+License: MIT
+LicenseCopyrightHolders: Yakir Gagnon
+PackageName: TimeFloats
+PackageOwner: yakir12
+PackageUUID: ef0906e4-6f4f-502d-af18-4b9827200815
+StrategyConfirmIncluded: false
+StrategyLevel: 1
+StrategyReviewExcluded: false
+_src_path: /home/yakir/.julia/packages/BestieTemplate/jBHga

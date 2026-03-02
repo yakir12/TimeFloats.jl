@@ -1,0 +1,10 @@
+name = "TimeFloats"
+uuid = "ef0906e4-6f4f-502d-af18-4b9827200815"
+authors = ["Yakir Gagnon <12.yakir@gmail.com>"]
+version = "0.1.0"
+
+[workspace]
+projects = ["test", "docs"]
+
+[compat]
+julia = "1.10"
