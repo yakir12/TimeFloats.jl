@@ -7,7 +7,7 @@ export tofloat, fromfloat,
        tosecond, 
        # tominute, tohour,
        # fromnanosecond, frommicrosecond, frommillisecond,
-       fromsecond,
+       fromsecond
        # fromminute, fromhour
 
 const TIMEPERIODS = (Nanosecond, Microsecond, Millisecond, Second, Minute, Hour)
