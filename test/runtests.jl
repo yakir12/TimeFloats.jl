@@ -1,6 +1,7 @@
 using Dates
 using TimeFloats
 using Test
+using Aqua
 
 @testset "tofloat" begin
     @testset "nanosecond" begin
@@ -235,4 +236,8 @@ end
 
     org = Nanosecond(1) + Microsecond(2) + Millisecond(3) + Second(4) + Minute(5) + Hour(6) + Day(7) + Week(8)
     @test fromsecond(Dates.CompoundPeriod, tosecond(org)) == org
+end
+
+@testset "Aqua.jl" begin
+    Aqua.test_all(TimeFloats)
 end
