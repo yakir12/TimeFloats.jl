@@ -223,3 +223,16 @@ end
         @test fromsecond(Dates.CompoundPeriod, 1.5) == Second(1) + Millisecond(500)
     end
 end
+
+@testset "round trip" begin
+    for T in (Nanosecond, Microsecond, Millisecond, Second, Minute, Hour, Day, Week)
+        org = T(123)
+        @test fromsecond(T, tosecond(org)) == org
+    end
+
+    org = Time(1,2,3,4,5,6)
+    @test fromsecond(Time, tosecond(org)) == org
+
+    org = Nanosecond(1) + Microsecond(2) + Millisecond(3) + Second(4) + Minute(5) + Hour(6) + Day(7) + Week(8)
+    @test fromsecond(Dates.CompoundPeriod, tosecond(org)) == org
+end
