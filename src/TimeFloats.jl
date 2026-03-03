@@ -15,7 +15,7 @@ Convert `x` to a float representation of `x` in seconds. `x` can be any type in 
 ```jldoctest
 julia> using Dates
 
-julia> toscond(Millisecond(1500))
+julia> tosecond(Millisecond(1500))
 1.5
 ```
 """
