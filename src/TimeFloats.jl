@@ -12,7 +12,7 @@ const fixedperiods = Base.uniontypes(FixedPeriod)
 Convert `x` to a float representation of `x` in seconds. `x` can be any type in the `Dates.FixedPeriod` union-type (i.e. `Nanosecond`, `Microsecond`, `Millisecond`, `Second`, `Minute`, `Hour`, `Day`, and `Week`), `Time`, or `Dates.CompoundPeriod`.
 
 # Examples
-```jldoctest main
+```jldoctest
 julia> using Dates
 
 julia> toscond(Millisecond(1500))
@@ -38,7 +38,9 @@ end
 Convert `x` to a float representation of `x` as a `T`. `T` is any of the types in the `Dates.FixedPeriod` union-type (i.e. `Nanosecond`, `Microsecond`, `Millisecond`, `Second`, `Minute`, `Hour`, `Day`, or `Week`). `x` can be any of the types in the `Dates.FixedPeriod` union-type, `Time`, or `Dates.CompoundPeriod`.
 
 # Examples
-```jldoctest main
+```jldoctest
+julia> using Dates
+
 julia> tofloat(Millisecond, Second(1))
 1000.0
 ```
@@ -53,7 +55,9 @@ tofloat(::Type{S}, x::CompoundPeriod) where {S<:FixedPeriod} = tofloat(S, conver
 Convert `x` float seconds to a `T`. `T` is any of the types in the `Dates.FixedPeriod` union-type (i.e. `Nanosecond`, `Microsecond`, `Millisecond`, `Second`, `Minute`, `Hour`, `Day`, and `Week`), `Time`, or `Dates.CompoundPeriod`.
 
 # Examples
-```jldoctest main
+```jldoctest
+julia> using Dates
+
 julia> fromsecond(Millisecond, 1.5)
 1500 milliseconds
 ```
@@ -76,7 +80,9 @@ end
 Convert `x` float `S` to a `T`. `S` is any of the types in the `Dates.FixedPeriod` union-type (i.e. `Nanosecond`, `Microsecond`, `Millisecond`, `Second`, `Minute`, `Hour`, `Day`, or `Week`), while `T` is any of the types in the `Dates.FixedPeriod` union-type ,`Time`, or `Dates.CompoundPeriod`.
 
 # Examples
-```jldoctest main
+```jldoctest
+julia> using Dates
+
 julia> fromfloat(Millisecond, 1, Second)
 1000 milliseconds
 ```
