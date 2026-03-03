@@ -1,10 +1,11 @@
 module TimeFloats
 
 import Dates: Nanosecond, Second, value, Time, CompoundPeriod, canonicalize, FixedPeriod
+import Base: uniontypes
 
 export tofloat, fromfloat, tosecond, fromsecond
 
-const fixedperiods = Base.uniontypes(FixedPeriod)
+const fixedperiods = uniontypes(FixedPeriod)
 
 """
     tosecond(x)
