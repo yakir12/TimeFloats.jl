@@ -9,7 +9,7 @@ const fixedperiods = Base.uniontypes(FixedPeriod)
 """
     tosecond(x)
 
-Convert `x` to a float representation of `x` in seconds. `x` can be any of the subtypes of `TimePeriod` (i.e. `Nanosecond`, `Microsecond`, `Millisecond`, `Second`, `Minute`, and `Hour`), `Time`, or `Dates.CompoundPeriod`.
+Convert `x` to a float representation of `x` in seconds. `x` can be any type in the `Dates.FixedPeriod` union-type (i.e. `Nanosecond`, `Microsecond`, `Millisecond`, `Second`, `Minute`, `Hour`, `Day`, and `Week`), `Time`, or `Dates.CompoundPeriod`.
 
 # Examples
 ```julia-repl
@@ -31,9 +31,9 @@ end
 
 
 """
-    tofloat(T<:TimePeriod, x)
+    tofloat(T<:FixedPeriod, x)
 
-Convert `x` to a float representation of `x` as a `T` time period. `T` can be any of the subtypes of `TimePeriod` (i.e. `Nanosecond`, `Microsecond`, `Millisecond`, `Second`, `Minute`, and `Hour`). `x` can be any of the subtypes of `TimePeriod`, `Time`, or `Dates.CompoundPeriod`.
+Convert `x` to a float representation of `x` as a `T`. `T` is any of the types in the `Dates.FixedPeriod` union-type (i.e. `Nanosecond`, `Microsecond`, `Millisecond`, `Second`, `Minute`, `Hour`, `Day`, or `Week`). `x` can be any of the types in the `Dates.FixedPeriod` union-type, `Time`, or `Dates.CompoundPeriod`.
 
 # Examples
 ```julia-repl
@@ -46,9 +46,9 @@ tofloat(::Type{S}, x::Time) where {S<:FixedPeriod} = tofloat(S, x - Time(0))
 tofloat(::Type{S}, x::CompoundPeriod) where {S<:FixedPeriod} = tofloat(S, convert(typeof(minimum(oneunit, x.periods)), x))
 
 """
-    fromsecond(T<:TimePeriod, x)
+    fromsecond(T, x::Real)
 
-Approximate a float representation of `x` in seconds to a `T` time period. `T` can be any of the subtypes of `TimePeriod` (i.e. `Nanosecond`, `Microsecond`, `Millisecond`, `Second`, `Minute`, and `Hour`), `Time`, or `Dates.CompoundPeriod`.
+Convert `x` float seconds to a `T`. `T` is any of the types in the `Dates.FixedPeriod` union-type (i.e. `Nanosecond`, `Microsecond`, `Millisecond`, `Second`, `Minute`, `Hour`, `Day`, and `Week`), `Time`, or `Dates.CompoundPeriod`.
 
 # Examples
 ```julia-repl
@@ -56,7 +56,7 @@ julia> fromsecond(Millisecond, 1.5)
 1500 milliseconds
 ```
 """
-fromsecond(::Type{T}, x) where {T} = fromfloat(T, x, Second)
+fromsecond(::Type{T}, x::Real) where {T} = fromfloat(T, x, Second)
 
 for S in fixedperiods, T in fixedperiods
     if S == T
@@ -69,9 +69,9 @@ for S in fixedperiods, T in fixedperiods
 end
 
 """
-    fromfloat(T<:AbstractTime, x::Real, S<:TimePeriod)
+    fromfloat(T, x::Real, S<:FixedPeriod)
 
-Approximate a float representation of `x` as a `S` time persiod to a `T`. `T` can be any of the subtypes of `TimePeriod` (i.e. `Nanosecond`, `Microsecond`, `Millisecond`, `Second`, `Minute`, and `Hour`), `Time`, and `Dates.CompoundPeriod`.
+Convert `x` float `S` to a `T`. `S` is any of the types in the `Dates.FixedPeriod` union-type (i.e. `Nanosecond`, `Microsecond`, `Millisecond`, `Second`, `Minute`, `Hour`, `Day`, or `Week`), while `T` is any of the types in the `Dates.FixedPeriod` union-type ,`Time`, or `Dates.CompoundPeriod`.
 
 # Examples
 ```julia-repl
