@@ -1,20 +1,10 @@
 module TimeFloats
 
-import Dates: Nanosecond, Microsecond, Millisecond, Second, Minute, Hour, TimePeriod, AbstractTime, value, Time, CompoundPeriod, canonicalize
+import Dates: Nanosecond, Second, value, Time, CompoundPeriod, canonicalize, FixedPeriod
 
-export tofloat, fromfloat, 
-       # tonanosecond, tomicrosecond, tomillisecond, 
-       tosecond, 
-       # tominute, tohour,
-       # fromnanosecond, frommicrosecond, frommillisecond,
-       fromsecond
-       # fromminute, fromhour
+export tofloat, fromfloat, tosecond, fromsecond
 
-const TIMEPERIODS = (Nanosecond, Microsecond, Millisecond, Second, Minute, Hour)
-
-# tonanosecond(x) = tofloat(Nanosecond, x)
-# tomicrosecond(x) = tofloat(Microsecond, x)
-# tomillisecond(x) = tofloat(Millisecond, x)
+const fixedperiods = Base.uniontypes(FixedPeriod)
 
 """
     tosecond(x)
@@ -29,10 +19,7 @@ julia> toscond(Millisecond(1500))
 """
 tosecond(x) = tofloat(Second, x)
 
-# tominute(x) = tofloat(Minute, x)
-# tohour(x) = tofloat(Hour, x)
-
-for S in TIMEPERIODS, T in TIMEPERIODS
+for S in fixedperiods, T in fixedperiods
     if S == T
         @eval tofloat(::Type{$S}, x::$T) = Float64(value(x))
     elseif oneunit(S) < oneunit(T)
@@ -54,13 +41,9 @@ julia> tofloat(Millisecond, Second(1))
 1000.0
 ```
 """
-tofloat(::Type{S}, x::Time) where {S<:TimePeriod}= tofloat(S, x - Time(0))
+tofloat(::Type{S}, x::Time) where {S<:FixedPeriod} = tofloat(S, x - Time(0))
 
-tofloat(::Type{S}, x::CompoundPeriod) where {S<:TimePeriod} = tofloat(S, convert(typeof(minimum(oneunit, x.periods)), x))
-
-# fromnanosecond(::Type{T}, x) where {T<:AbstractTime} = fromfloat(T, x, Nanosecond)
-# frommicrosecond(::Type{T}, x) where {T<:AbstractTime} = fromfloat(T, x, Microsecond)
-# frommillisecond(::Type{T}, x) where {T<:AbstractTime} = fromfloat(T, x, Millisecond)
+tofloat(::Type{S}, x::CompoundPeriod) where {S<:FixedPeriod} = tofloat(S, convert(typeof(minimum(oneunit, x.periods)), x))
 
 """
     fromsecond(T<:TimePeriod, x)
@@ -73,12 +56,9 @@ julia> fromsecond(Millisecond, 1.5)
 1500 milliseconds
 ```
 """
-fromsecond(::Type{T}, x) where {T<:AbstractTime} = fromfloat(T, x, Second)
+fromsecond(::Type{T}, x) where {T} = fromfloat(T, x, Second)
 
-# fromminute(::Type{T}, x) where {T<:AbstractTime} = fromfloat(T, x, Minute)
-# fromhour(::Type{T}, x) where {T<:AbstractTime} = fromfloat(T, x, Hour)
-
-for S in TIMEPERIODS, T in TIMEPERIODS
+for S in fixedperiods, T in fixedperiods
     if S == T
         @eval fromfloat(::Type{$T}, x::Real, ::Type{$S}) = $T(round(Int, x))
     elseif oneunit(S) < oneunit(T)
@@ -99,8 +79,8 @@ julia> fromfloat(Millisecond, 1, Second)
 1000 milliseconds
 ```
 """
-fromfloat(::Type{Time}, x::Real, ::Type{S}) where {S<:TimePeriod} = Time(0) + fromfloat(Nanosecond, x, S)
+fromfloat(::Type{Time}, x::Real, ::Type{S}) where {S<:FixedPeriod} = Time(0) + fromfloat(Nanosecond, x, S)
 
-fromfloat(::Type{CompoundPeriod}, x::Real, ::Type{S}) where {S<:TimePeriod} = canonicalize(fromfloat(Nanosecond, x, S))
+fromfloat(::Type{CompoundPeriod}, x::Real, ::Type{S}) where {S<:FixedPeriod} = canonicalize(fromfloat(Nanosecond, x, S))
 
 end
