@@ -3,7 +3,7 @@ using TimeFloats
 using Test
 using Aqua
 
-const time123456ns = (60*60 + 2*60 + 3) * 1e9 + 4e6 + 5e3 + 6
+const time123456ns = 3723004005006 # == (60*60 + 2*60 + 3) * 1e9 + 4e6 + 5e3 + 6
 
 @testset "tofloat" begin
     @testset "nanosecond" begin
@@ -85,8 +85,8 @@ const time123456ns = (60*60 + 2*60 + 3) * 1e9 + 4e6 + 5e3 + 6
         @test tofloat(Day, Second(1500)) == 1500.0 / 60 / 60 / 24
         @test tofloat(Day, Minute(1500)) == 1500.0 / 60 / 24
         @test tofloat(Day, Hour(1500)) == 1500.0 / 24
-        @test tofloat(Day, Day(1500)) == 1500.0 * 24 / 24
-        @test tofloat(Day, Week(1500)) == 1500.0 * 24 * 7 / 24
+        @test tofloat(Day, Day(1500)) == 1500.0
+        @test tofloat(Day, Week(1500)) == 1500.0 * 7
         @test tofloat(Day, Time(1,2,3,4,5,6)) ≈ time123456ns*1e-9 / 60 / 60 / 24
         @test tofloat(Day, Second(1) + Millisecond(500)) == 1.5 / 60 / 60 / 24
     end
@@ -97,8 +97,8 @@ const time123456ns = (60*60 + 2*60 + 3) * 1e9 + 4e6 + 5e3 + 6
         @test tofloat(Week, Second(1500)) ≈ 1500.0 / 60 / 60 / 24 / 7
         @test tofloat(Week, Minute(1500)) == 1500.0 / 60 / 24 / 7
         @test tofloat(Week, Hour(1500)) == 1500.0 / 24 / 7
-        @test tofloat(Week, Day(1500)) == 1500.0 * 24 / 24 / 7
-        @test tofloat(Week, Week(1500)) == 1500.0 * 24 * 7 / 24 / 7
+        @test tofloat(Week, Day(1500)) == 1500.0 / 7
+        @test tofloat(Week, Week(1500)) == 1500.0
         @test tofloat(Week, Time(1,2,3,4,5,6)) ≈ time123456ns*1e-9 / 60 / 60 / 24 / 7
         @test tofloat(Week, Second(1) + Millisecond(500)) == 1.5 / 60 / 60 / 24 / 7
     end
@@ -138,7 +138,7 @@ end
         @test fromfloat(Microsecond, 1500, Hour) == Microsecond(1500_000_000 * 60 * 60)
         @test fromfloat(Microsecond, 1500, Day) == Microsecond(1500_000_000 * 60 * 60 * 24)
         @test fromfloat(Microsecond, 1500, Week) == Microsecond(1500_000_000 * 60 * 60 * 24 * 7)
-        @test fromfloat(Time, time123456ns*1e-3, Microsecond) == Time(1,2,3,4,5,6)
+        @test fromfloat(Time, time123456ns // 10^3, Microsecond) == Time(1,2,3,4,5,6)
         @test fromfloat(Dates.CompoundPeriod, 1500_000, Microsecond) == Second(1) + Millisecond(500)
     end
     @testset "millisecond" begin
@@ -150,7 +150,7 @@ end
         @test fromfloat(Millisecond, 1500, Hour) == Millisecond(1500_000 * 60 * 60)
         @test fromfloat(Millisecond, 1500, Day) == Millisecond(1500_000 * 60 * 60 * 24)
         @test fromfloat(Millisecond, 1500, Week) == Millisecond(1500_000 * 60 * 60 * 24 * 7)
-        @test fromfloat(Time, time123456ns*1e-6, Millisecond) == Time(1,2,3,4,5,6)
+        @test fromfloat(Time, time123456ns // 10^6, Millisecond) == Time(1,2,3,4,5,6)
         @test fromfloat(Dates.CompoundPeriod, 1500, Millisecond) == Second(1) + Millisecond(500)
     end
     @testset "second" begin
@@ -162,7 +162,7 @@ end
         @test fromfloat(Second, 1500, Hour) == Second(1500 * 60 * 60)
         @test fromfloat(Second, 1500, Day) == Second(1500 * 60 * 60 * 24)
         @test fromfloat(Second, 1500, Week) == Second(1500 * 60 * 60 * 24 * 7)
-        @test fromfloat(Time, time123456ns*1e-9, Second) == Time(1,2,3,4,5,6)
+        @test fromfloat(Time, time123456ns // 10^9, Second) == Time(1,2,3,4,5,6)
         @test fromfloat(Dates.CompoundPeriod, 1.5, Second) == Second(1) + Millisecond(500)
     end
     @testset "minute" begin
@@ -174,7 +174,7 @@ end
         @test fromfloat(Minute, 1500, Hour) == Minute(1500 * 60)
         @test fromfloat(Minute, 1500, Day) == Minute(1500 * 60 * 24)
         @test fromfloat(Minute, 1500, Week) == Minute(1500 * 60 * 24 * 7)
-        @test fromfloat(Time, time123456ns*1e-9 / 60, Minute) == Time(1,2,3,4,5,6)
+        @test fromfloat(Time, time123456ns // 10^9 // 60, Minute) == Time(1,2,3,4,5,6)
         @test fromfloat(Dates.CompoundPeriod, 1.5 / 60, Minute) == Second(1) + Millisecond(500)
     end
     @testset "hour" begin
@@ -186,7 +186,7 @@ end
         @test fromfloat(Hour, 1500, Hour) == Hour(1500)
         @test fromfloat(Hour, 1500, Day) == Hour(1500 * 24)
         @test fromfloat(Hour, 1500, Week) == Hour(1500 * 24 * 7)
-        @test fromfloat(Time, time123456ns*1e-9 / 60 / 60, Hour) == Time(1,2,3,4,5,6)
+        @test fromfloat(Time, time123456ns // 10^9 // 60 // 60, Hour) == Time(1,2,3,4,5,6)
         @test fromfloat(Dates.CompoundPeriod, 1.5 / 60 / 60, Hour) == Second(1) + Millisecond(500)
     end
     @testset "day" begin
@@ -195,11 +195,11 @@ end
         @test fromfloat(Day, 1500, Millisecond) == Day(0) # lossy
         @test fromfloat(Day, 1500, Second) == Day(0) # lossy
         @test fromfloat(Day, 1500, Minute) == Day(1)
-        @test fromfloat(Day, 1500, Hour) == Day(62) # banker's rounding rounds 1500/24 down
+        @test fromfloat(Day, 1500, Hour) == Day(62) # banker's rounding: 1500/24 = 62.5 rounds to even (62)
         @test fromfloat(Day, 1500, Day) == Day(1500)
         @test fromfloat(Day, 1500, Week) == Day(1500 * 7)
-        @test fromfloat(Time, time123456ns*1e-9 / 60 / 60 / 24, Day) == Time(1,2,3,4,5,6)
-        @test fromfloat(Dates.CompoundPeriod, 1.5 / 60 / 60 / 24, Day) == Second(1) + Millisecond(500)
+        @test fromfloat(Time, time123456ns // 10^9 // 60 // 60 // 24, Day) == Time(1,2,3,4,5,6)
+        @test fromfloat(Dates.CompoundPeriod, 3 // 2 // 60 // 60 // 24, Day) == Second(1) + Millisecond(500)
     end
     @testset "week" begin
         @test fromfloat(Week, 1500, Nanosecond) == Week(0) # lossy
@@ -207,11 +207,11 @@ end
         @test fromfloat(Week, 1500, Millisecond) == Week(0) # lossy
         @test fromfloat(Week, 1500, Second) == Week(0) # lossy
         @test fromfloat(Week, 1500, Minute) == Week(0)
-        @test fromfloat(Week, 1500, Hour) == Week(9) # banker's rounding rounds 1500/24 down
+        @test fromfloat(Week, 1500, Hour) == Week(9) # 1500/24/7 ≈ 8.928, rounds to nearest (9)
         @test fromfloat(Week, 1500, Day) == Week(214)
         @test fromfloat(Week, 1500, Week) == Week(1500)
-        @test fromfloat(Time, time123456ns*1e-9 / 60 / 60 / 24 / 7, Week) == Time(1,2,3,4,5,6)
-        @test fromfloat(Dates.CompoundPeriod, 1.5 / 60 / 60 / 24 / 7, Week) == Second(1) + Millisecond(500)
+        @test fromfloat(Time, time123456ns // 10^9 // 60 // 60 // 24 // 7, Week) == Time(1,2,3,4,5,6)
+        @test fromfloat(Dates.CompoundPeriod, 3 // 2 // 60 // 60 // 24 // 7, Week) == Second(1) + Millisecond(500)
     end
     @testset "fromsecond" begin
         @test fromsecond(Nanosecond, 0.0000015) == Nanosecond(1500)
@@ -222,7 +222,7 @@ end
         @test fromsecond(Hour, 1500.0 * 60 * 60) == Hour(1500)
         @test fromsecond(Day, 1500.0 * 60 * 60 * 24) == Day(1500)
         @test fromsecond(Week, 1500.0 * 60 * 60 * 24 * 7) == Week(1500)
-        @test fromsecond(Time, time123456ns*1e-9) == Time(1,2,3,4,5,6)
+        @test fromsecond(Time, time123456ns // 10^9) == Time(1,2,3,4,5,6)
         @test fromsecond(Dates.CompoundPeriod, 1.5) == Second(1) + Millisecond(500)
     end
 end
@@ -236,8 +236,41 @@ end
     org = Time(1,2,3,4,5,6)
     @test fromsecond(Time, tosecond(org)) == org
 
-    org = Nanosecond(1) + Microsecond(2) + Millisecond(3) + Second(4) + Minute(5) + Hour(6) + Day(7) + Week(8)
+    org = Nanosecond(8) + Microsecond(7) + Millisecond(6) + Second(5) + Minute(4) + Hour(3) + Day(2) + Week(1)
     @test fromsecond(Dates.CompoundPeriod, tosecond(org)) == org
+end
+
+@testset "edge cases" begin
+    @testset "empty CompoundPeriod" begin
+        @test tofloat(Second, Dates.CompoundPeriod()) == 0.0
+        @test tofloat(Nanosecond, Dates.CompoundPeriod()) == 0.0
+        @test tosecond(Dates.CompoundPeriod()) == 0.0
+    end
+
+    @testset "zero values" begin
+        @test tosecond(Second(0)) == 0.0
+        @test tosecond(Millisecond(0)) == 0.0
+        @test tofloat(Minute, Hour(0)) == 0.0
+        @test fromsecond(Second, 0.0) == Second(0)
+        @test fromsecond(Dates.CompoundPeriod, 0.0) == Dates.CompoundPeriod()
+    end
+
+    @testset "negative values" begin
+        @test tosecond(Second(-5)) == -5.0
+        @test tosecond(Millisecond(-1500)) == -1.5
+        @test tofloat(Minute, Hour(-2)) == -120.0
+        @test fromsecond(Millisecond, -1.5) == Millisecond(-1500)
+        @test fromsecond(Second, -90.0) == Second(-90)
+        @test tofloat(Second, Second(-1) + Millisecond(-500)) == -1.5
+        @test fromfloat(Dates.CompoundPeriod, -3//2 - 1//60//2, Minute) == Minute(-1) + Second(-30) + Millisecond(-500)
+    end
+
+    @testset "large values" begin
+        # Test values that approach Int64 limits when converted to nanoseconds
+        @test tosecond(Week(1000)) == 1000.0 * 60 * 60 * 24 * 7
+        @test tofloat(Nanosecond, Day(100)) == 100.0 * 24 * 60 * 60 * 1e9
+        @test fromsecond(Week, 1e10) == Week(round(Int, 1e10 / 60 / 60 / 24 / 7))
+    end
 end
 
 @testset "Aqua.jl" begin
