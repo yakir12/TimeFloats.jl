@@ -62,6 +62,25 @@ julia> using Dates
 julia> fromsecond(Millisecond, 1.5)
 1500 milliseconds
 ```
+
+## Notice
+This conversion is inherently lossy: the resulting `T` instance might not be able to accurately represent the float seconds. In the following example, we want to convert 0.0015 seconds, i.e. 1.5 milliseconds, to `Millisecond`s. Since `Millisecond`s can only hold integers, the 1.5 milliseconds is rounded to 2:
+
+```jldoctest
+julia> using Dates
+
+julia> fromsecond(Millisecond, 0.0015)
+2 milliseconds
+```
+
+This is perhaps more common when converting to time units that are longer than seconds:
+
+```jldoctest
+julia> using Dates
+
+julia> fromsecond(Minute, 1)
+0 minutes
+```
 """
 fromsecond(::Type{T}, x::Real) where {T} = fromfloat(T, x, Second)
 
@@ -87,6 +106,26 @@ julia> using Dates
 julia> fromfloat(Millisecond, 1, Second)
 1000 milliseconds
 ```
+
+## Notice
+This conversion is inherently lossy: the resulting `T` instance might not be able to accurately represent the float `S`. In the following example, we want to convert 1.5 milliseconds to `Millisecond`s. Since `Millisecond`s can only hold integers, the 1.5 milliseconds is rounded to 2:
+
+```jldoctest
+julia> using Dates
+
+julia> fromfloat(Millisecond, 1.5, Millisecond)
+2 milliseconds
+```
+
+This is perhaps more common when converting to time units that are longer than what the float represents:
+
+```jldoctest
+julia> using Dates
+
+julia> fromfloat(Minute, 1, Millisecond)
+0 minutes
+```
+
 """
 fromfloat(::Type{Time}, x::Real, ::Type{S}) where {S<:FixedPeriod} = Time(0) + fromfloat(Nanosecond, x, S)
 

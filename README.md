@@ -29,7 +29,7 @@ julia> tofloat(Nanosecond, Hour(3))
 julia> fromsecond(Dates.CompoundPeriod, 92384756.9823465)
 152 weeks, 5 days, 6 hours, 25 minutes, 56 seconds, 982 milliseconds, 346 microseconds, 512 nanoseconds
 ```
-- Or converting from a float milliseconds to `Minute`s (OBS: this appoximates the result to the closest integer of seconds)?
+- Or converting from a float milliseconds to `Minute`s (OBS: this approximates the result to the closest integer of seconds)?
 ```julia
 julia> fromfloat(Minute, 60_123, Millisecond)
 1 minute
@@ -42,7 +42,7 @@ In short, if you've been pasting `tosecond{T}(t::T) = t / convert(T, Base.Dates.
 This package converts any `Nanosecond`, `Microsecond`, `Millisecond`, `Second`, `Minute`, `Hour`, `Day`, `Week` (i.e. `Dates.FixedPeriod`), `Time`, or `CompoundPeriod` to a floating number (`Float64`) representing some `Dates.FixedPeriod` of your choice with the `tofloat(T<:FixedPeriod, x)` function. `x` can be any of the types in the `Dates.FixedPeriod` union type, `Time`, or `Dates.CompoundPeriod`, while `T` must be one of the types in the `Dates.FixedPeriod` union type.
 
 ## fromfloat
-`fromfloat(T, x::Real, S<:FixedPeriod)` does the inverse of `tofloat`: given `x` nanoseconds, microseconds, milliseconds, seconds, minutes, hours, days, or weeks (denoted by `S`, one of the types in the`FixedPeriod` union type), express it as an instance of type `T` (can be any `Nanosecond`, `Microsecond`, `Millisecond`, `Second`, `Minute`, `Hour`, `Day`, `Week`, `Time`, or `CompoundPeriod`). Note that this can be a lossy conversion, e.g. 2 minutes as `Hour` is `Hour(0)` (not `Hour(2/60)`).
+`fromfloat(T, x::Real, S<:FixedPeriod)` does the inverse of `tofloat`: given `x` nanoseconds, microseconds, milliseconds, seconds, minutes, hours, days, or weeks (denoted by `S`, one of the types in the`FixedPeriod` union type), express it as an instance of type `T` (can be any `Nanosecond`, `Microsecond`, `Millisecond`, `Second`, `Minute`, `Hour`, `Day`, `Week`, `Time`, or `CompoundPeriod`). Note that this is a lossy conversion, e.g. 2 minutes as `Hour` is `Hour(0)` (not `Hour(2/60)`).
 
-## Convinience functions
-There are two convinience functions defnied in this package for the most common cases where you want to convert to seconds, `tosecond`, and when you want to convert from seconds, `fromsecond`.
+## Convenience functions
+There are two convenience functions defined in this package for the most common cases where you want to convert to seconds, `tosecond`, and when you want to convert from seconds, `fromsecond`.
