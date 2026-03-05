@@ -1,6 +1,7 @@
 module TimeFloats
 
 import Dates: Nanosecond, Second, Day, value, Time, CompoundPeriod, FixedPeriod, periods
+import Dates: Microsecond, Millisecond, Minute, Hour, Day, Week
 import Base: uniontypes
 
 export tofloat, fromfloat, tosecond, fromsecond
@@ -139,6 +140,15 @@ for S in fixedperiods, T in fixedperiods
     end
 end
 
+next(::Type{Week}) = (Day, 7)
+next(::Type{Day}) = (Hour, 24)
+next(::Type{Hour}) = (Minute, 60)
+next(::Type{Minute}) = (Second, 60)
+next(::Type{Second}) = (Millisecond, 1000)
+next(::Type{Millisecond}) = (Microsecond, 1000)
+next(::Type{Microsecond}) = (Nanosecond, 1000)
+next(::Type{Nanosecond}) = (Nanosecond, 0)
+
 trim(::Type{CompoundPeriod}, x) = x
 function trim(::Type{Time}, x) 
     ps = periods(x)
@@ -152,15 +162,101 @@ function trim(::Type{Time}, x)
 end
 
 function fromfloat(::Type{T}, x::Real, ::Type{S}) where {T<:Union{Time, CompoundPeriod}, S<:FixedPeriod}
-    i = findfirst(==(S), fixedperiods)
     res = CompoundPeriod()
-    for (F, m) in @view magnitude[i:end]
+    _S = S
+    while x ≠ 0
         Δ = trunc(x)
+        res += _S(Δ)
+        _S, m = next(_S)
         x -= Δ
         x *= m
-        res += F(Δ)
     end
     return trim(T, res)
 end
 
 end
+
+
+
+# struct FP{T} where T<:FixedPeriod
+#     value::Real
+#     res::CompoundPeriod
+# end
+#
+# function Base.iterate(fp::FP{T}, state=1) 
+#     if fp.value == 0
+#         return nothing
+#     else
+#         Δ = trunc(fp.value)
+#         fp.value -= Δ
+#         S, m = next(T)
+#         fp.value *= m
+#         fp.res += T(Δ)
+#         fp2 = FP{S}(m*(fp.value - Δ), fp.res + T(Δ))
+#         return (fp2,  
+#             end
+#         end
+#
+#
+#         state > S.count ? nothing : (state*state, state+1)
+#     end
+#
+#     for S in fixedperiods
+#         @eval begin
+#             function cascade(::Type{$S})
+#                 oneunit(S) - 
+#             end
+#         end
+#     end
+#
+#     function fun!(x, y, ::Type{S}) where {S<:FixedPeriod}
+#         Δ = trunc(x)
+#         x -= Δ
+#         T, m = next(S)
+#         x *= m
+#         y += S(Δ)
+#         fun!(x, y, T)
+#     end
+#     fun!(_, y, ::Type{Nanosecond}) = y
+#
+#
+#
+#     @enum FP week=604800000000000 day=86400000000000 hour=3600_000_000_000 minute=60_000_000_000 second=1_000_000_000 millisecond=1000_000 microsecond=1000 nanosecond=1 
+#
+#     Base.iterate(::Type{T}, ::Type{Nanosecond}) where {T<:FixedPeriod} = nothing
+#     Base.iterate(::Type{T}, state=Week) where {T<:FixedPeriod} = (7, Day)
+#
+#     for S in fixedperiods
+#         @eval begin
+#             function cascade(::Type{$S})
+#                 res = Pair{FixedPeriod, Int}[]
+#                 for 
+#                 end
+#             end
+#         end
+#
+#         trim(::Type{CompoundPeriod}, x) = x
+#         function trim(::Type{Time}, x) 
+#             ps = periods(x)
+#             res = Time(0)
+#             for p in ps
+#                 if oneunit(p) < Day(1)
+#                     res += p
+#                 end
+#             end
+#             return res
+#         end
+#
+#         function fromfloat(::Type{T}, x::Real, ::Type{S}) where {T<:Union{Time, CompoundPeriod}, S<:FixedPeriod}
+#             i = findfirst(==(S), fixedperiods)
+#             res = CompoundPeriod()
+#             for (F, m) in @view magnitude[i:end]
+#                 Δ = trunc(x)
+#                 x -= Δ
+#                 x *= m
+#                 res += F(Δ)
+#             end
+#             return trim(T, res)
+#         end
+#
+#     end

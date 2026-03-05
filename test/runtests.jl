@@ -2,6 +2,7 @@ using Dates
 using TimeFloats
 using Test
 using Aqua
+using JET
 
 const time123456ns = 3723004005006 # == (60*60 + 2*60 + 3) * 1e9 + 4e6 + 5e3 + 6
 
@@ -275,4 +276,8 @@ end
 
 @testset "Aqua.jl" begin
     Aqua.test_all(TimeFloats)
+end
+
+@testset "JET tests" begin
+    JET.test_package(TimeFloats; target_modules = (TimeFloats,))
 end
