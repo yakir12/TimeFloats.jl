@@ -69,7 +69,7 @@ julia> fromsecond(1001//1000)
 1 second, 1 millisecond
 
 julia> fromsecond(1.5)
-1 second, 500 millisecond
+1 second, 500 milliseconds
 ```
 
 ## Notice
