@@ -84,3 +84,14 @@ julia> tofloat(Minute, Week(10^14))
 julia> Week(10^6) /ₜ Minute
 -6.5709240540253386e7
 ```
+
+However, converting from floats to periods is more than a thousand times slower with TimeFloats:
+```julia
+julia> @btime fromfloat(1.5, Minute)
+  1.454 μs (29 allocations: 688 bytes)
+1 minute, 30 seconds
+
+julia> @btime 1.5 *ₜ Minute
+  1.192 ns (0 allocations: 0 bytes)
+90000000000 nanoseconds
+end
