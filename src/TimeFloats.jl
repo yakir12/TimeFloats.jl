@@ -68,8 +68,8 @@ julia> using Dates
 julia> fromsecond(1001//1000)
 1 second, 1 millisecond
 
-julia> fromsecond(Millisecond, 1.5)
-1500 milliseconds
+julia> fromsecond(1.5)
+1 second, 500 millisecond
 ```
 
 ## Notice
