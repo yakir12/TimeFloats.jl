@@ -51,4 +51,36 @@ fromsecond(123.456) | 123.456 *ₜ Second
 tosecond(Time(13,39,42,652)) | (Time(13,39,42,652) - Time(0)) /ₜ Second
 tofloat(Minute, Week(21) + Hour(32) + Millisecond(45)) | (Week(21) + Hour(32) + Millisecond(45)) /ₜ Minute
 x | Dates and DateTimes handling
+fromfloat returns CompoundPeriod | *ₜ returns Nanosecond
 
+Because DateFormats returns nanoseconds it is much more prone to integer overflow. For example:
+```julia
+julia> fromfloat(10^11 + π, Week)
+100000000003 weeks, 23 hours, 47 minutes, 11 seconds, 396 milliseconds, 484 microseconds, 375 nanoseconds
+
+julia> (10^5 + π) *ₜ Week
+ERROR: InexactError: Int64(6.048190003523689e19)
+Stacktrace:
+ [1] Int64
+   @ ./float.jl:923 [inlined]
+ [2] convert
+   @ ./number.jl:7 [inlined]
+ [3] _round_convert
+   @ ./rounding.jl:480 [inlined]
+ [4] round
+   @ ./rounding.jl:479 [inlined]
+ [5] round
+   @ ./rounding.jl:477 [inlined]
+ [6] *ₜ
+   @ ~/.julia/packages/DateFormats/AAcl7/src/DateFormats.jl:123 [inlined]
+ [7] *ₜ(t::Float64, P::Type{Week})
+   @ DateFormats ~/.julia/packages/DateFormats/AAcl7/src/DateFormats.jl:122
+ [8] top-level scope
+   @ REPL[72]:1
+
+julia> tofloat(Minute, Week(10^14))
+1.008e18
+
+julia> Week(10^6) /ₜ Minute
+-6.5709240540253386e7
+```
