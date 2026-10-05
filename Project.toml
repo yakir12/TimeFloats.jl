@@ -8,7 +8,7 @@ Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
 [compat]
 Aqua = "0.8"
-Dates = "1"
+Dates = "<0.0.1, 1"
 JET = "0"
 Test = "1"
 julia = "1"
